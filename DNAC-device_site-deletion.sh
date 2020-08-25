@@ -211,17 +211,21 @@ if [ "$#" == "0" ]
   then
     help
 	else
-    while getopts "d:h" opt
+    while getopts "d:hxyz" opt
     do
       case $opt in
         d) DNAIP="${OPTARG}"
            echo "DNA-Center IP is: ${DNAIP}" 
            get_auth_token
-           delete_devices
-           delete_building
-           delete_area
             ;;
         h) help
+            ;;
+        x) delete_devices
+            ;;
+        y) delete_building
+            ;;
+        z) delete_area
+            ;;
       esac
     done
     shift $(($OPTIND -1))
