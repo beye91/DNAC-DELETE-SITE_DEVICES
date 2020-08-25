@@ -13,10 +13,13 @@ tmp_dir="/tmp/dnac_device_site-deletion_logs/${timestamp}"
 
 function help
 {
-  echo "Usage: delete_devices-sites.sh [-d] [-h]"
+  echo "Usage: delete_devices-sites.sh [-d x.x.x.x] [-h] [-x] [-y] [-z]"
   echo ""
   echo "   -d  DNA-Center IP address"
   echo "   -h  Help menue"
+  echo "   -x  Delete devices"
+  echo "   -y  Delete building"
+  echo "   -z  Delete areas"
   echo ""
   echo ""
 }
