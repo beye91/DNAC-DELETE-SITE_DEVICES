@@ -8,6 +8,7 @@ BLUE="\033[0;36m"
 NORM="\033[0m"
 
 timestamp=`date +%Y%m%d-%H-%M-%S`
+timestamp_log=`date +%Y%m%d-%H-%M-%S`
 mkdir -p /tmp/dnac_device_site-deletion_logs/${timestamp}
 tmp_dir="/tmp/dnac_device_site-deletion_logs/${timestamp}"
 
@@ -60,7 +61,7 @@ function header
   printf "\n"
   printf "${YELLOW}                       Author: cbeye Last update:25/08/20                                           ${NORM}\n"
   printf "\n"
-  printf "${YELLOW}         Your TMP dir is: ${tmp_dir}                                                                ${NORM}\n"
+  printf "${YELLOW}         Your TMP dir is: ${tmp_dir}                                                                ${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
 }
 
 function get_auth_token
@@ -91,7 +92,7 @@ function delete_devices
     curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" -X GET https://${DNAIP}/dna/intent/api/v1/network-device --insecure -s | jq '.' > ${tmp_dir}/temp_get_dna_devices
 
     printf "${YELLOW}###############################${NORM}\n"
-    printf "${YELLOW}   Start deleting devices...   ${NORM}\n"
+    printf "${YELLOW}   Start deleting devices...   ${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
     printf "${YELLOW}###############################${NORM}\n"
     DEVICE_COUNT=`curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" -X GET https://${DNAIP}/dna/intent/api/v1/network-device/count --insecure -s | jq '.' | grep response | awk '{print $2}' | sed 's/.$//'`
     #FILE_DEVICE_COUNT=`cat ${tmp_dir}/temp_get_dna_devices | grep -i \"id\" | wc -l`
@@ -100,8 +101,9 @@ function delete_devices
             #printf "${GREEN}MATCHING! EXPORTED DEVICES ${FILE_DEVICE_COUNT} DEVICE COUNT ${DEVICE_COUNT} ${NORM}\n"
             COUNTER=1
             while read device_id; 
-                do    
-                    printf "${YELLOW}$COUNTER / ${DEVICE_COUNT} DEVICE $device_id will be deleted ${NORM}\n"
+                do   
+                    timestamp=`date +%Y%m%d-%H-%M-%S`
+                    printf "${YELLOW}${timestamp} $COUNTER / ${DEVICE_COUNT} DEVICE $device_id will be deleted ${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
                     COUNTER=$((COUNTER+1))
                     echo "curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/network-device/${device_id}?isForceDelete=yes --insecure -s"
                     sleep 1
@@ -120,27 +122,29 @@ function delete_devices
 
     curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" -X GET https://${DNAIP}/dna/intent/api/v1/network-device --insecure -s | jq '.' > ${tmp_dir}/temp_get_dna_devices
     FILE_DEVICE_COUNT=`cat ${tmp_dir}/temp_get_dna_devices | grep -i \"id\" | wc -l`
+    timestamp=`date +%Y%m%d-%H-%M-%S`
     if [ $FILE_DEVICE_COUNT -ne 0 ]
         then 
-            printf "${RED}Not done yet... getting new devices until all devices has been deleted!${NORM}\n"
+            printf "${RED}${timestamp} Not done yet... getting new devices until all devices has been deleted!${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
             delete_devices
          else
-            printf "${GREEN}DONE! Alle devices has been deleted...${NORM}\n"
+            printf "${GREEN}${timestamp} DONE! Alle devices has been deleted...${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
     fi
 }
 
 function delete_building
 { 
-    printf "${YELLOW}Getting buildings data...${NORM}\n"
+    printf "${YELLOW}Getting buildings data...${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
     curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" -X GET https://${DNAIP}/dna/intent/api/v1/site?type=building --insecure -s | jq '.' > ${tmp_dir}/temp_get_dna_building
 
     printf "${YELLOW}###############################${NORM}\n"
-    printf "${YELLOW}  Start deleting BUILDINGS ... ${NORM}\n"
+    printf "${YELLOW}  Start deleting BUILDINGS ... ${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
     printf "${YELLOW}###############################${NORM}\n"
     COUNTER=1
     while read building_id; 
         do   
-            printf "${YELLOW}$COUNTER BUILDING $building_id will be deleted ${NORM}\n"
+            timestamp=`date +%Y%m%d-%H-%M-%S`
+            printf "${YELLOW}${timestamp} $COUNTER BUILDING $building_id will be deleted ${NORM}\n"
             COUNTER=$((COUNTER+1))
             echo "curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/site/${building_id} --insecure -s"
             sleep 1
@@ -156,27 +160,29 @@ function delete_building
 
     curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" -X GET https://${DNAIP}/dna/intent/api/v1/site?type=building --insecure -s | jq '.' > ${tmp_dir}/temp_get_dna_building
     FILE_BUILDING_COUNT=`cat ${tmp_dir}/temp_get_dna_building | grep -i \"id\" | wc -l`
+    timestamp=`date +%Y%m%d-%H-%M-%S`
     if [ $FILE_BUILDING_COUNT -ne 0 ]
         then 
-            printf "${RED}Not done yet... getting new buildings until all devices has been deleted!${NORM}\n"
+            printf "${RED}${timestamp} Not done yet... getting new buildings until all devices has been deleted!${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
             delete_building
          else
-            printf "${GREEN}DONE! Alle buildings has been deleted...${NORM}\n"
+            printf "${GREEN}${timestamp} DONE! Alle buildings has been deleted...${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
     fi
 }
 
 function delete_area
 {
-    printf "${YELLOW}Getting areas data...${NORM}\n"
+    printf "${YELLOW}Getting areas data...${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
     curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" -X GET https://${DNAIP}/dna/intent/api/v1/site?type=area --insecure -s | jq '.' > ${tmp_dir}/temp_get_dna_area
 
     printf "${YELLOW}###############################${NORM}\n"
-    printf "${YELLOW}     Start deleting AREAS ...  ${NORM}\n"
+    printf "${YELLOW}     Start deleting AREAS ...  ${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
     printf "${YELLOW}###############################${NORM}\n"
     COUNTER=1
     while read area_id; 
         do   
-            printf "${YELLOW}$COUNTER AREA $area_id will be deleted ${NORM}\n"
+            timestamp=`date +%Y%m%d-%H-%M-%S`
+            printf "${YELLOW}${timestamp} $COUNTER AREA $area_id will be deleted ${NORM}\n"
             COUNTER=$((COUNTER+1))
             echo "curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/site/${area_id} --insecure -s"
             sleep 1
@@ -192,12 +198,13 @@ function delete_area
 
     curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" -X GET https://${DNAIP}/dna/intent/api/v1/site?type=area --insecure -s | jq '.' > ${tmp_dir}/temp_get_dna_area
     FILE_AREA_COUNT=`cat ${tmp_dir}/temp_get_dna_area | grep -i \"id\" | wc -l`
+    timestamp=`date +%Y%m%d-%H-%M-%S`
     if [ $FILE_AREA_COUNT -ne 0 ]
         then 
-            printf "${RED}Not done yet... getting new areas until all devices has been deleted!${NORM}\n"
+            printf "${RED}${timestamp} Not done yet... getting new areas until all devices has been deleted!${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
             delete_area
          else
-            printf "${GREEN}DONE! Alle areas has been deleted...${NORM}\n"
+            printf "${GREEN}${timestamp} DONE! Alle areas has been deleted...${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
     fi
 }
 
