@@ -105,7 +105,7 @@ function delete_devices
                     timestamp=`date +%Y%m%d-%H-%M-%S`
                     printf "${YELLOW}${timestamp} $COUNTER / ${DEVICE_COUNT} DEVICE $device_id will be deleted ${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
                     COUNTER=$((COUNTER+1))
-                    echo "curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/network-device/${device_id}?isForceDelete=yes --insecure -s"
+                    curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/network-device/${device_id}?isForceDelete=yes --insecure -s
                     sleep 1
                     if (( $COUNTER % 100 == 0 ))           
                         then
@@ -146,7 +146,7 @@ function delete_building
             timestamp=`date +%Y%m%d-%H-%M-%S`
             printf "${YELLOW}${timestamp} $COUNTER BUILDING $building_id will be deleted ${NORM}\n"
             COUNTER=$((COUNTER+1))
-            echo "curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/site/${building_id} --insecure -s"
+            curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/site/${building_id} --insecure -s
             sleep 1
             if (( $COUNTER % 100 == 0 ))           
                 then
@@ -184,7 +184,7 @@ function delete_area
             timestamp=`date +%Y%m%d-%H-%M-%S`
             printf "${YELLOW}${timestamp} $COUNTER AREA $area_id will be deleted ${NORM}\n"
             COUNTER=$((COUNTER+1))
-            echo "curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/site/${area_id} --insecure -s"
+            curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/site/${area_id} --insecure -s
             sleep 1
             if (( $COUNTER % 100 == 0 ))           
                 then
