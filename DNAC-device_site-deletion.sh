@@ -106,7 +106,7 @@ function delete_devices
                     printf "${YELLOW}${timestamp} $COUNTER / ${DEVICE_COUNT} DEVICE $device_id will be deleted ${NORM}\n" | tee ${tmp_dir}/${timestamp_log}_log
                     COUNTER=$((COUNTER+1))
                     curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/network-device/${device_id}?isForceDelete=yes --insecure -s
-                    sleep 1
+                    sleep 2
                     if (( $COUNTER % 100 == 0 ))           
                         then
                             printf "${GREEN} Generate new token...${NORM}\n"
@@ -147,7 +147,7 @@ function delete_building
             printf "${YELLOW}${timestamp} $COUNTER BUILDING $building_id will be deleted ${NORM}\n"
             COUNTER=$((COUNTER+1))
             curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/site/${building_id} --insecure -s
-            sleep 1
+            sleep 2
             if (( $COUNTER % 100 == 0 ))           
                 then
                     echo "Reauth..."
@@ -185,7 +185,7 @@ function delete_area
             printf "${YELLOW}${timestamp} $COUNTER AREA $area_id will be deleted ${NORM}\n"
             COUNTER=$((COUNTER+1))
             curl --header "Content-Type:application/json" --header "Accept:application/json" --header "x-auth-token:${DNAC_TOKEN}" --request DELETE https://${DNAIP}/dna/intent/api/v1/site/${area_id} --insecure -s
-            sleep 1
+            sleep 2
             if (( $COUNTER % 100 == 0 ))           
                 then
                     echo "Reauth..."
